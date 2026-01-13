@@ -44,7 +44,6 @@
                                 <thead>
                                     <tr>
                                         <th>Tanggal Penggunaan</th>
-                                        <th>Kapal</th>
                                         <th>Keterangan</th>
                                         <th>Jumlah</th>
                                         <th>Satuan</th>
@@ -56,7 +55,6 @@
                                 <tfoot>
                                     <tr>
                                         <th>Tanggal Penggunaan</th>
-                                        <th>Kapal</th>
                                         <th>Keterangan</th>
                                         <th>Jumlah</th>
                                         <th>Satuan</th>
@@ -73,9 +71,6 @@
                                             <tr>
                                                 <td>
                                                     {{ $oil->tanggal }}
-                                                </td>
-                                                <td>
-                                                    <p class="text-capitalize">{{ $oil->nama_kapal }}</p>
                                                 </td>
                                                 <td>
                                                     {{ $oil->keterangan }}

@@ -58,7 +58,7 @@ class BBMController extends Controller
     public function edit($id)
     {
         $ships = Kapal::all();
-        $bbm = Kapal::with('penggunaanBBM')->findOrFail($id);
+        $bbm = PenggunaanBBM::with('kapal')->findOrFail($id);
         return view('master.bbm.edit', compact('ships', 'bbm'));
     }
 

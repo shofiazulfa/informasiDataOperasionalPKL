@@ -19,17 +19,6 @@
                             <input type="date" name="tanggal" class="form-control" id="tanggal">
                         </div>
                         <div class="col-md-12">
-                            <label for="kapal_id" class="form-label">Kapal</label>
-                            <select id="kapal_id" name="kapal_id" class="form-select">
-                                @forelse ($ships as $ship)
-                                    <option value="" disabled selected>Pilih kapal</option>
-                                    <option value="{{ $ship->id }}">{{ $ship->nama_kapal }}</option>
-                                @empty
-                                    <option value="" class="text-danger">Harap mengisi data kapal terlebih dahulu</option>
-                                @endforelse
-                            </select>
-                        </div>
-                        <div class="col-md-12">
                             <label for="keterangan" class="form-label">Keterangan</label>
                             <textarea name="keterangan" id="keterangan" class="form-control" cols="30"
                                 placeholder="Masukkan keterangan"></textarea>

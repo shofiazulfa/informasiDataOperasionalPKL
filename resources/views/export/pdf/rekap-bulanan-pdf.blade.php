@@ -205,7 +205,6 @@
             <tr>
                 <th>No</th>
                 <th>Tanggal</th>
-                <th>Kapal</th>
                 <th>Keterangan</th>
                 <th>Liter</th>
                 <th>Harga/Liter</th>
@@ -217,7 +216,6 @@
                 <tr>
                     <td>{{ $i + 1 }}</td>
                     <td>{{ $row->tanggal }}</td>
-                    <td>{{ $row->nama_kapal ?? 'Umum' }}</td>
                     <td>{{ $row->keterangan }}</td>
                     <td>{{ $row->jumlah_liter }} Liter</td>
                     <td>Rp {{ number_format($row->harga_per_liter, 0) }}</td>
