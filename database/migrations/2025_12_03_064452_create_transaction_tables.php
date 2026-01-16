@@ -76,6 +76,7 @@ return new class extends Migration {
             $table->foreignId('periode_id')->constrained('periode_laporan')->cascadeOnDelete();
 
             // Relasi ke tabel karyawan (Mengambil NIK, Nama, Jabatan dari sini)
+            $table->foreignId('kapal_id')->constrained('kapal')->onDelete('cascade');
             $table->foreignId('karyawan_id')->constrained('karyawan')->onDelete('cascade');
 
             $table->decimal('total_gaji_diterima', 15, 2); // Disimpan untuk history

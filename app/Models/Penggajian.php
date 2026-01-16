@@ -15,6 +15,7 @@ class Penggajian extends Model
     protected $fillable = [
         'tanggal',
         'periode_id',
+        'kapal_id',
         'karyawan_id',
         'total_gaji_diterima'
     ];
@@ -22,6 +23,11 @@ class Penggajian extends Model
     public function karyawan()
     {
         return $this->belongsTo(Karyawan::class);
+    }
+
+    public function kapal()
+    {
+        return $this->belongsTo(Kapal::class);
     }
 
     public function periode()

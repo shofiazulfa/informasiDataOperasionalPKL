@@ -65,6 +65,15 @@
                             @enderror
                         </div>
                         <div class="col-md-12">
+                            <label for="kapal_id" class="form-label">Kapal</label>
+                            <select id="kapal_id" name="kapal_id" class="form-select">
+                                <option value="" disabled selected>Pilih kapal</option>
+                                @foreach ($ships as $ship)
+                                    <option value="{{ $ship->id }}">{{ $ship->nama_kapal }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-12">
                             <label for="tanggal" class="form-label">Tanggal Gajian</label>
                             <input type="date" name="tanggal" class="form-control" id="tanggal"
                                 placeholder="Masukkan tanggal">

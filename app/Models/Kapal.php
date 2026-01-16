@@ -26,4 +26,9 @@ class Kapal extends Model
     {
         return $this->hasOne(BiayaOperasional::class);
     }
+
+    public function penggajian()
+    {
+        return $this->hasOne(BiayaOperasional::class);
+    }
 }

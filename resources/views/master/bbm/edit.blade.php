@@ -21,9 +21,18 @@
                                 value="{{ $bbm->tanggal }}">
                         </div>
                         <div class="col-md-12">
-                            <label for="keterangan" class="form-label">Keterangan</label>
-                            <textarea name="keterangan" id="keterangan" class="form-control" cols="30"
-                                placeholder="Masukkan keterangan">{{ $bbm->keterangan }}</textarea>
+                            <label for="kapal_id" class="form-label">Kapal</label>
+                            <select id="kapal_id" name="kapal_id" class="form-select">
+                                <option value="" disabled selected>Pilih kapal</option>
+                                @foreach ($ships as $ship)
+                                    <option value="{{ $ship->id }}" @if($ship->id == $bbm->kapal_id) @endif>{{ $ship->nama_kapal }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-12">
+                            <label for="satuan" class="form-label">Satuan</label>
+                            <input type="text" class="form-control" id="satuan"
+                                placeholder="Masukkan satuan" value="{{ $bbm->satuan }}">
                         </div>
                         <div class="col-md-12">
                             <label for="jumlah_liter_view" class="form-label">Jumlah Penggunaan</label>

@@ -13,14 +13,16 @@ class BBMController extends Controller
 {
     public function index()
     {
-        $oils = PenggunaanBBM::all();
+        $oils = PenggunaanBBM::with(['kapal'])->get();
         $isBBMNone = PenggunaanBBM::all()->isEmpty();
         return view('master.bbm.index', compact('oils', 'isBBMNone'));
     }
 
     public function create()
     {
-        $ships = Kapal::all();
+        $ships = Kapal::select('id', 'nama_kapal', 'jenis_kapal')
+            ->groupBy('nama_kapal', 'id', 'jenis_kapal')
+            ->get();
         return view('master.bbm.create', compact('ships'));
     }
 
@@ -57,7 +59,9 @@ class BBMController extends Controller
 
     public function edit($id)
     {
-        $ships = Kapal::all();
+        $ships = Kapal::select('id', 'nama_kapal', 'jenis_kapal')
+            ->groupBy('nama_kapal', 'id', 'jenis_kapal')
+            ->get();
         $bbm = PenggunaanBBM::with('kapal')->findOrFail($id);
         return view('master.bbm.edit', compact('ships', 'bbm'));
     }
@@ -72,8 +76,16 @@ class BBMController extends Controller
             'total_harga' => 'required|numeric'
         ]);
         $bbm = PenggunaanBBM::findOrFail($id);
+
+        // cari atau buat periode otomatis
+        $periode = PeriodeLaporan::firstOrCreate([
+            'bulan' => date('m', strtotime($request->tanggal)),
+            'tahun' => date('Y', strtotime($request->tanggal))
+        ]);
+
         $bbm->update([
             'tanggal' => $request->tanggal,
+            'periode_id' => $periode->id,
             'kapal_id' => $request->kapal_id,
             'keterangan' => $request->keterangan,
             'jumlah_liter' => $request->jumlah_liter,
@@ -87,7 +99,9 @@ class BBMController extends Controller
     public function destroy($id)
     {
         $bbm = PenggunaanBBM::findOrFail($id);
+        $periode = PeriodeLaporan::findOrFail($id);
         $bbm->delete();
+        $periode->delete();
         return redirect()->route('master.bbm.index')
             ->with('success', 'Data berhasil dihapus.');
     }
@@ -122,6 +136,7 @@ class BBMController extends Controller
 
                 DB::table('penggunaan_bbm')->insert([
                     'periode_id' => $periode_id,
+                    'kapal_id' => rand(1, 3),
                     'tanggal' => $tanggal,
                     'keterangan' => $keterangan,
                     'jumlah_liter' => $jumlah_liter,

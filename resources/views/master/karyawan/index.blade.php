@@ -44,6 +44,7 @@
                                     <tr>
                                         <th>Tanggal Gajian</th>
                                         <th>NIK</th>
+                                        <th>Kapal</th>
                                         <th>Nama Karyawan</th>
                                         <th>Status PTKP</th>
                                         <th>Jabatan</th>
@@ -55,6 +56,7 @@
                                     <tr>
                                         <th>Tanggal Gajian</th>
                                         <th>NIK</th>
+                                        <th>Kapal</th>
                                         <th>Nama Karyawan</th>
                                         <th>Status PTKP</th>
                                         <th>Jabatan</th>
@@ -69,6 +71,7 @@
                                                 {{ $emp->penggajian->tanggal }}
                                             </td>
                                             <td>{{ $emp->nik }}</td>
+                                            <td>{{ $emp->penggajian->kapal->nama_kapal }}</td>
                                             <td>
                                                 <p class="text-capitalize">{{ $emp->nama }}</p>
                                             </td>

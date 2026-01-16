@@ -66,8 +66,13 @@ class PembelianController extends Controller
             'total_jumlah' => 'required|numeric'
         ]);
         $pembelian = Pembelian::findOrFail($id);
+        $periode = PeriodeLaporan::updateOrCreate([
+            'bulan' => date('m', strtotime($request->tanggal)),
+            'tahun' => date('Y', strtotime($request->tanggal))
+        ]);
         $pembelian->update([
             'tanggal' => $request->tanggal,
+            'periode_id' => $periode->id,
             'keterangan' => $request->keterangan,
             'pcs' => $request->pcs,
             'harga_satuan' => $request->harga_satuan,
@@ -80,7 +85,9 @@ class PembelianController extends Controller
     public function destroy($id)
     {
         $pembelian = Pembelian::findOrFail($id);
+        $periode = PeriodeLaporan::findOrFail($id);
         $pembelian->delete();
+        $periode->delete();
         return redirect()->route('master.pembelian.index')
             ->with('success', 'Data berhasil dihapus.');
     }

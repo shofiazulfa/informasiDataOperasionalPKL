@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Kapal;
 use App\Models\Karyawan;
 use App\Models\Penggajian;
 use App\Models\PeriodeLaporan;
@@ -13,19 +14,21 @@ class KaryawanController extends Controller
 {
     public function index()
     {
-        $employees = Karyawan::with('penggajian')->get();
+        $employees = Karyawan::with('penggajian', 'penggajian.kapal')->get();
         return view('master.karyawan.index', compact('employees'));
     }
 
     public function create()
     {
-        return view('master.karyawan.create');
+        $ships = Kapal::all();
+        return view('master.karyawan.create', compact('ships'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
             'nik' => 'required|unique|numeric|min_digits:16',
+            'kapal_id' => 'required',
             'nama' => 'required',
             'jabatan' => 'required',
             'status_ptkp' => 'required',
@@ -60,6 +63,7 @@ class KaryawanController extends Controller
             Penggajian::create([
                 'tanggal' => $request->tanggal,
                 'periode_id' => $periode->id,
+                'kapal_id' => $request->kapal_id,
                 'karyawan_id' => $karyawan->id,
                 'total_gaji_diterima' => $request->total_gaji_diterima
             ]);
@@ -72,13 +76,15 @@ class KaryawanController extends Controller
     public function edit($id)
     {
         $karyawan = Karyawan::with('penggajian')->firstOrFail();
-        return view('master.karyawan.edit', compact('karyawan'));
+        $ships = Kapal::all();
+        return view('master.karyawan.edit', compact('karyawan', 'ships'));
     }
 
     public function update(Request $request, $id)
     {
         $request->validate([
             'nik' => 'required|numeric|min_digits:16',
+            'kapal_id' => 'required',
             'nama' => 'required',
             'jabatan' => 'required',
             'status_ptkp' => 'required',
@@ -99,6 +105,13 @@ class KaryawanController extends Controller
         DB::transaction(function () use ($request, $id) {
             $karyawan = Karyawan::findOrFail($id);
             $penggajian = Penggajian::where('karyawan_id', $karyawan->id)->firstOrFail();
+
+            // cari atau buat periode otomatis
+            $periode = PeriodeLaporan::updateOrCreate([
+                'bulan' => date('m', strtotime($request->tanggal)),
+                'tahun' => date('Y', strtotime($request->tanggal))
+            ]);
+
             $karyawan->update([
                 'nik' => $request->nik,
                 'nama' => $request->nama,
@@ -107,6 +120,8 @@ class KaryawanController extends Controller
             ]);
             $penggajian->update([
                 'tanggal' => $request->tanggal,
+                'periode_id' => $periode->id,
+                'kapal_id' => $request->kapal_id,
                 'karyawan_id' => $karyawan->id,
                 'total_gaji_diterima' => $request->total_gaji_diterima
             ]);
@@ -120,8 +135,10 @@ class KaryawanController extends Controller
     {
         $karyawan = Karyawan::findOrFail($id);
         $penggajian = Penggajian::where('karyawan_id', $karyawan->id)->firstOrFail();
+        $periode = PeriodeLaporan::findOrFail($id);
         $karyawan->delete();
         $penggajian->delete();
+        $periode->delete();
         return redirect()->route('master.karyawan.index')
             ->with('success', 'Data berhasil dihapus.');
     }
@@ -189,6 +206,7 @@ class KaryawanController extends Controller
                     'periode_id' => $periode_id,
                     'tanggal' => $tanggal,
                     'karyawan_id' => $karyawanId,
+                    'kapal_id' => rand(1, 3),
                     'total_gaji_diterima' => $gaji,
                     'created_at' => now(),
                     'updated_at' => now(),

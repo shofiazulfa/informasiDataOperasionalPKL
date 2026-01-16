@@ -13,7 +13,7 @@ class KapalController extends Controller
 {
     public function index()
     {
-        $ships = Kapal::latest()->with('biayaOperasional')->get();
+        $ships = BiayaOperasional::latest()->with('kapal')->get();
         return view('master.kapal.index', compact(var_name: 'ships'));
     }
     public function create()
@@ -42,13 +42,21 @@ class KapalController extends Controller
                 'nama_kapal' => $request->nama_kapal,
                 'jenis_kapal' => $request->jenis_kapal
             ]);
+                
+            // cari atau buat periode otomatis
+            $periode = PeriodeLaporan::firstOrCreate([
+                'bulan' => date('m', strtotime($request->tanggal)),
+                'tahun' => date('Y', strtotime($request->tanggal))
+            ]);
 
             BiayaOperasional::create([
                 'tanggal' => $request->tanggal,
+                'periode_id' => $periode->id,
                 'kapal_id' => $kapal->id,
                 'keterangan' => $request->keterangan,
                 'jumlah_biaya' => $request->jumlah_biaya
             ]);
+
         });
 
         return redirect()->route('master.kapal.index')
@@ -80,15 +88,18 @@ class KapalController extends Controller
         DB::transaction(function () use ($request, $id) {
             $kapal = Kapal::findOrFail($id);
             $biayaOperasional = BiayaOperasional::where('kapal_id', $kapal->id)->firstOrFail();
+            
             // cari atau buat periode otomatis
-            $periode = PeriodeLaporan::firstOrCreate([
+            $periode = PeriodeLaporan::updateOrCreate([
                 'bulan' => date('m', strtotime($request->tanggal)),
                 'tahun' => date('Y', strtotime($request->tanggal))
             ]);
+
             $kapal->update([
                 'nama_kapal' => $request->nama_kapal,
                 'jenis_kapal' => $request->jenis_kapal,
             ]);
+
             $biayaOperasional->update([
                 'tanggal' => $request->tanggal,
                 'periode_id' => $periode->id,
@@ -104,8 +115,10 @@ class KapalController extends Controller
     {
         $kapal = Kapal::findOrFail($id);
         $biayaOperasional = BiayaOperasional::where('kapal_id', $kapal->id)->firstOrFail();
+        $periode = PeriodeLaporan::findOrFail($id);
         $kapal->delete();
         $biayaOperasional->delete();
+        $periode->delete();
         return redirect()->route('master.kapal.index')
             ->with('success', 'Data berhasil dihapus.');
     }
@@ -126,24 +139,39 @@ class KapalController extends Controller
 
         DB::beginTransaction();
 
+        $namaKapal = ['Tug Boat Aizu 03/Barge Zidni 01', 'Tug Boat Aizu 05/Barge Zidni 03', 'Tug Boat Aizu 07/Barge Zidni 06'];
+
+        $i = 0;
+
         try {
             foreach ($rows as $row) {
 
                 $tanggal = $this->convertTanggal($row[1]);
-                $keterangan = $row[2];
-                $nama_kapal = $this->extractKapal($keterangan);
+                $keterangan = '';
+                $nama_kapal = $namaKapal[$i % count($namaKapal)];
                 $jenis_kapal = 'Tugboat - Tongkang';
                 $jumlah_biaya = $this->cleanNumber($row[3]);
 
                 // ambil periode
                 $periode_id = $this->getPeriodeId($tanggal);
 
-                $kapalId = DB::table('kapal')->insertGetId([
-                    'nama_kapal' => $nama_kapal,
-                    'jenis_kapal' => $jenis_kapal,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
+                // cek kapal sudah ada atau belum
+                $kapal = DB::table('kapal')
+                    ->where('nama_kapal', $nama_kapal)
+                    ->first();
+
+                if ($kapal) {
+                    $kapalId = $kapal->id;
+                } else {
+                    $kapalId = DB::table('kapal')->insertGetId([
+                        'nama_kapal' => $nama_kapal,
+                        'jenis_kapal' => $jenis_kapal,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+                }
+
+                $i++;
 
                 DB::table(table: 'biaya_operasional')->insert([
                     'periode_id' => $periode_id,

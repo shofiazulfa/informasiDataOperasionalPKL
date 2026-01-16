@@ -44,7 +44,7 @@
                                 <thead>
                                     <tr>
                                         <th>Tanggal Penggunaan</th>
-                                        <th>Keterangan</th>
+                                        <th>Kapal</th>
                                         <th>Jumlah</th>
                                         <th>Satuan</th>
                                         <th>Harga</th>
@@ -55,7 +55,7 @@
                                 <tfoot>
                                     <tr>
                                         <th>Tanggal Penggunaan</th>
-                                        <th>Keterangan</th>
+                                        <th>Kapal</th>
                                         <th>Jumlah</th>
                                         <th>Satuan</th>
                                         <th>Harga</th>
@@ -73,7 +73,7 @@
                                                     {{ $oil->tanggal }}
                                                 </td>
                                                 <td>
-                                                    {{ $oil->keterangan }}
+                                                    {{ $oil->kapal->nama_kapal ?? '-' }}
                                                 </td>
                                                 <td>
                                                     {{ number_format($oil->jumlah_liter, 0) }}

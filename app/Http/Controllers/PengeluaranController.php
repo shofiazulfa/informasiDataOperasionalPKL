@@ -60,8 +60,13 @@ class PengeluaranController extends Controller
             'kredit' => 'required|numeric'
         ]);
         $pengeluaran = Pengeluaran::findOrFail($id);
+        $periode = PeriodeLaporan::updateOrCreate([
+            'bulan' => date('m', strtotime($request->tanggal)),
+            'tahun' => date('Y', strtotime($request->tanggal))
+        ]);
         $pengeluaran->update([
             'tanggal' => $request->tanggal,
+            'periode_id' => $periode->id,
             'keterangan' => $request->keterangan,
             'kredit' => $request->kredit
         ]);
@@ -72,7 +77,9 @@ class PengeluaranController extends Controller
     public function destroy($id)
     {
         $pengeluaran = Pengeluaran::findOrFail($id);
+        $periode = PeriodeLaporan::findOrFail($id);
         $pengeluaran->delete();
+        $periode->delete();
         return redirect()->route('master.pengeluaran.index')
             ->with('success', 'Data berhasil dihapus.');
     }

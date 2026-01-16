@@ -19,14 +19,23 @@
                             <input type="date" name="tanggal" class="form-control" id="tanggal">
                         </div>
                         <div class="col-md-12">
-                            <label for="keterangan" class="form-label">Keterangan</label>
-                            <textarea name="keterangan" id="keterangan" class="form-control" cols="30"
-                                placeholder="Masukkan keterangan"></textarea>
+                            <label for="kapal_id" class="form-label">Kapal</label>
+                            <select id="kapal_id" name="kapal_id" class="form-select">
+                                <option value="" disabled selected>Pilih kapal</option>
+                                @foreach ($ships as $ship)
+                                    <option value="{{ $ship->id }}">{{ $ship->nama_kapal }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-12">
+                            <label for="satuan" class="form-label">Satuan</label>
+                            <input type="text" class="form-control" id="satuan"
+                                placeholder="Masukkan satuan">
                         </div>
                         <div class="col-md-12">
                             <label for="jumlah_liter_view" class="form-label">Jumlah Penggunaan</label>
                             <input type="text" class="form-control" id="jumlah_liter_view"
-                                placeholder="Masukkan jumlah penggunaan per liter">
+                                placeholder="Masukkan jumlah penggunaan">
 
                             <input type="hidden" name="jumlah_liter" id="jumlah_liter">
                         </div>
@@ -58,6 +67,18 @@
     <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js"
         crossorigin="anonymous"></script>
     <script src="{{ asset('assets/js/datatables-simple-demo.js') }}"></script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#kapal_id').select2({
+                placeholder: "Pilih kapal",
+                allowClear: true
+            });
+        });
+    </script>
 
     <script>
         const hargaPerLitertView = document.getElementById('harga_per_liter_view');

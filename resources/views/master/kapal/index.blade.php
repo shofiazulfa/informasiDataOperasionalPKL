@@ -46,7 +46,6 @@
                                         <th>Nama Kapal</th>
                                         <th>Jenis Kapal</th>
                                         <th>Jumlah Biaya Operasional</th>
-                                        <th>Keterangan</th>
                                         <th>Aksi</th>
                                     </tr>
                                 </thead>
@@ -56,22 +55,20 @@
                                         <th>Nama Kapal</th>
                                         <th>Jenis Kapal</th>
                                         <th>Jumlah Biaya Operasional</th>
-                                        <th>Keterangan</th>
                                         <th>Aksi</th>
                                     </tr>
                                 </tfoot>
                                 <tbody>
                                     @foreach ($ships as $ship)
                                         <tr>
-                                            <td>{{ $ship->biayaOperasional->tanggal }}</td>
+                                            <td>{{ $ship->tanggal ?? '-' }}</td>
                                             <td>
-                                                <p class="text-capitalize">{{ $ship->nama_kapal }}</p>
+                                                <p class="text-capitalize">{{ $ship->kapal->nama_kapal }}</p>
                                             </td>
                                             <td>
-                                                <p class="text-capitalize">{{ $ship->jenis_kapal }}</p>
+                                                <p class="text-capitalize">{{ $ship->kapal->jenis_kapal }}</p>
                                             </td>
-                                            <td>Rp.{{ number_format($ship->biayaOperasional->jumlah_biaya, 0) }}</td>
-                                            <td>{{ $ship->biayaOperasional->keterangan }}</td>
+                                            <td>Rp.{{ number_format($ship->jumlah_biaya ?? '0', 0) }}</td>
                                             <td>
                                                 <div class="container">
                                                     <div class="row">
